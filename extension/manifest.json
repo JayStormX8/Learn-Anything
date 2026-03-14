@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Learn Anything with AI",
+  "version": "1.0.0",
+  "description": "Screenshot your screen and paste it directly into your favorite AI chatbot. Learn anything in 3 simple steps.",
+  "permissions": [
+    "sidePanel",
+    "activeTab",
+    "tabs",
+    "desktopCapture"
+  ],
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Learn Anything with AI",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
