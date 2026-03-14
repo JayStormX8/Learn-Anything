@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learn Anything with AI</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <h1>Learn Anything</h1>
+      <p class="tagline">Your AI-powered learning companion</p>
+    </header>
+
+    <!-- 3 Steps Section -->
+    <section class="steps-section">
+      <h2>3 Steps to Learn Anything</h2>
+      <div class="steps">
+        <div class="step">
+          <span class="step-number">1</span>
+          <span class="step-text">Paste your goal</span>
+        </div>
+        <div class="step">
+          <span class="step-number">2</span>
+          <span class="step-text">Follow the AI steps</span>
+        </div>
+        <div class="step">
+          <span class="step-number">3</span>
+          <span class="step-text">If stuck, ask "How else could we solve this?"</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Top Things to Learn -->
+    <section class="ideas-section" id="ideasSection">
+      <h2>Top Things to Learn</h2>
+      <div class="ideas-grid">
+        <button class="idea-card" data-prompt="Help me use Loveable to build a website from scratch. Walk me through it step by step.">
+          <span class="idea-icon">🌐</span>
+          <span class="idea-label">Build a Website with Loveable</span>
+        </button>
+        <button class="idea-card" data-prompt="Help me build a Chrome extension step by step. Start with what it should do and guide me through the code.">
+          <span class="idea-icon">🧩</span>
+          <span class="idea-label">Build a Chrome Extension</span>
+        </button>
+        <button class="idea-card" data-prompt="Help me build a full software application using Loveable. Guide me through planning, designing, and building it.">
+          <span class="idea-icon">🚀</span>
+          <span class="idea-label">Build Software with Loveable</span>
+        </button>
+        <button class="idea-card" data-prompt="Help me write a book. Start by helping me choose a topic, outline chapters, and write the first chapter.">
+          <span class="idea-icon">📖</span>
+          <span class="idea-label">Write a Book</span>
+        </button>
+        <button class="idea-card" data-prompt="Help me create and launch an online course. Guide me through picking a topic, structuring lessons, and recording content.">
+          <span class="idea-icon">🎓</span>
+          <span class="idea-label">Create an Online Course</span>
+        </button>
+        <button class="idea-card" data-prompt="Help me start a YouTube channel. Guide me through niche selection, scripting my first video, and setting up the channel.">
+          <span class="idea-icon">🎬</span>
+          <span class="idea-label">Start a YouTube Channel</span>
+        </button>
+        <button class="idea-card" data-prompt="Help me build a mobile app from idea to prototype. Walk me through design, development, and testing.">
+          <span class="idea-icon">📱</span>
+          <span class="idea-label">Build a Mobile App</span>
+        </button>
+        <button class="idea-card" data-prompt="Help me automate tasks in my daily life and work using AI tools and scripts. Show me practical automations I can set up today.">
+          <span class="idea-icon">🤖</span>
+          <span class="idea-label">Automate Your Life with AI</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- AI Selector + Screenshot -->
+    <section class="ai-controls">
+      <div class="ai-selector">
+        <label for="aiSelect">Chat with:</label>
+        <select id="aiSelect">
+          <option value="https://claude.ai" selected>Claude</option>
+          <option value="https://chat.openai.com">ChatGPT</option>
+          <option value="https://gemini.google.com">Gemini</option>
+          <option value="https://copilot.microsoft.com">Copilot</option>
+        </select>
+        <button id="openAiBtn" class="btn btn-primary" title="Open AI in a new tab">Open AI Chat</button>
+      </div>
+      <button id="screenshotBtn" class="btn btn-screenshot">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+        Screenshot &amp; Paste to AI
+      </button>
+    </section>
+
+    <!-- Screenshot Preview -->
+    <section class="preview-section" id="previewSection" style="display:none;">
+      <h3>Screenshot Captured</h3>
+      <img id="screenshotPreview" alt="Screenshot preview">
+      <div class="preview-actions">
+        <button id="copyBtn" class="btn btn-primary">Copy to Clipboard</button>
+        <button id="dismissBtn" class="btn btn-secondary">Dismiss</button>
+      </div>
+      <p class="preview-hint">Screenshot copied! Paste it into your AI chat with Ctrl+V / Cmd+V</p>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Take a screenshot of anything you're stuck on and ask AI for help!</p>
+    </footer>
+  </div>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>
