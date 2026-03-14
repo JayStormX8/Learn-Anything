@@ -1,57 +1,75 @@
-// Views
-const homeView = document.getElementById("homeView");
-const chatView = document.getElementById("chatView");
-
-// Home view elements
+// DOM elements
 const aiSelect = document.getElementById("aiSelect");
 const openAiBtn = document.getElementById("openAiBtn");
-
-// Chat view elements
-const aiSelectChat = document.getElementById("aiSelectChat");
-const aiFrame = document.getElementById("aiFrame");
-const backBtn = document.getElementById("backBtn");
 const screenshotBtn = document.getElementById("screenshotBtn");
-const refreshBtn = document.getElementById("refreshBtn");
-const screenshotOverlay = document.getElementById("screenshotOverlay");
+const previewSection = document.getElementById("previewSection");
 const screenshotPreview = document.getElementById("screenshotPreview");
-const copyAgainBtn = document.getElementById("copyAgainBtn");
+const copyBtn = document.getElementById("copyBtn");
 const dismissBtn = document.getElementById("dismissBtn");
 
 let lastScreenshotDataUrl = null;
+let aiTabId = null; // Track the AI tab we opened
 
-// ---- Navigation ----
+// ---- Open AI in the browser tab next to the side panel ----
 
-function showChatView(url) {
-  // Sync the chat toolbar dropdown to match
-  aiSelectChat.value = url;
-  aiFrame.src = url;
-  homeView.style.display = "none";
-  chatView.style.display = "flex";
-}
-
-function showHomeView() {
-  chatView.style.display = "none";
-  homeView.style.display = "block";
-  aiFrame.src = ""; // unload iframe to save memory
-  screenshotOverlay.style.display = "none";
-}
-
-// Open AI Chat button -> switch to chat view with embedded iframe
 openAiBtn.addEventListener("click", () => {
-  showChatView(aiSelect.value);
+  const url = aiSelect.value;
+  openOrFocusAiTab(url);
 });
 
-// Back button -> return to home
-backBtn.addEventListener("click", showHomeView);
-
-// Switching AI in the chat toolbar
-aiSelectChat.addEventListener("change", () => {
-  aiFrame.src = aiSelectChat.value;
+// When switching AI, update the tracked tab
+aiSelect.addEventListener("change", () => {
+  // If we already have an AI tab open, navigate it
+  if (aiTabId !== null) {
+    chrome.tabs.get(aiTabId, (tab) => {
+      if (chrome.runtime.lastError || !tab) {
+        // Tab was closed, open a new one
+        openOrFocusAiTab(aiSelect.value);
+      } else {
+        chrome.tabs.update(aiTabId, { url: aiSelect.value, active: true });
+      }
+    });
+  }
 });
 
-// Refresh button
-refreshBtn.addEventListener("click", () => {
-  aiFrame.src = aiFrame.src;
+function openOrFocusAiTab(url) {
+  // First check if we already have the AI tab open
+  if (aiTabId !== null) {
+    chrome.tabs.get(aiTabId, (tab) => {
+      if (chrome.runtime.lastError || !tab) {
+        // Tab was closed, create new one
+        createAiTab(url);
+      } else {
+        // Navigate and focus existing tab
+        chrome.tabs.update(aiTabId, { url, active: true });
+      }
+    });
+  } else {
+    // Look for an existing tab with any of the AI URLs
+    chrome.tabs.query({ currentWindow: true }, (tabs) => {
+      const aiUrls = ["claude.ai", "chat.openai.com", "gemini.google.com", "copilot.microsoft.com"];
+      const existing = tabs.find((t) => t.url && aiUrls.some((u) => t.url.includes(u)));
+      if (existing) {
+        aiTabId = existing.id;
+        chrome.tabs.update(existing.id, { url, active: true });
+      } else {
+        createAiTab(url);
+      }
+    });
+  }
+}
+
+function createAiTab(url) {
+  chrome.tabs.create({ url }, (tab) => {
+    aiTabId = tab.id;
+  });
+}
+
+// Clean up if the AI tab is closed
+chrome.tabs.onRemoved.addListener((tabId) => {
+  if (tabId === aiTabId) {
+    aiTabId = null;
+  }
 });
 
 // ---- Idea Cards ----
@@ -59,16 +77,17 @@ refreshBtn.addEventListener("click", () => {
 document.querySelectorAll(".idea-card").forEach((card) => {
   card.addEventListener("click", () => {
     const prompt = card.dataset.prompt;
+    const url = aiSelect.value;
 
     // Copy the prompt to clipboard so user can paste it into the AI chat
     navigator.clipboard.writeText(prompt).then(() => {
-      showToast("Prompt copied! Paste it into the chat.");
+      showToast("Prompt copied! Paste it into your AI chat.");
     }).catch(() => {
-      showToast("Couldn't copy prompt, but opening chat...");
+      showToast("Opening AI chat...");
     });
 
-    // Open AI chat in the embedded view
-    showChatView(aiSelect.value);
+    // Open AI in the browser tab
+    openOrFocusAiTab(url);
   });
 });
 
@@ -76,6 +95,8 @@ document.querySelectorAll(".idea-card").forEach((card) => {
 
 screenshotBtn.addEventListener("click", async () => {
   screenshotBtn.disabled = true;
+  const originalHTML = screenshotBtn.innerHTML;
+  screenshotBtn.textContent = "Capturing...";
 
   try {
     const response = await chrome.runtime.sendMessage({ action: "captureScreenshot" });
@@ -87,18 +108,25 @@ screenshotBtn.addEventListener("click", async () => {
 
     lastScreenshotDataUrl = response.dataUrl;
 
-    // Show preview overlay
+    // Show preview
     screenshotPreview.src = lastScreenshotDataUrl;
-    screenshotOverlay.style.display = "block";
+    previewSection.style.display = "block";
 
-    // Auto-copy to clipboard
+    // Auto-copy to clipboard as image
     await copyScreenshotToClipboard(lastScreenshotDataUrl);
-    showToast("Screenshot copied! Paste with Ctrl+V");
+
+    // Focus the AI tab so user can paste
+    if (aiTabId !== null) {
+      chrome.tabs.update(aiTabId, { active: true });
+    }
+
+    showToast("Screenshot copied! Paste with Ctrl+V / Cmd+V");
   } catch (err) {
     showToast("Failed to capture screenshot");
     console.error(err);
   } finally {
     screenshotBtn.disabled = false;
+    screenshotBtn.innerHTML = originalHTML;
   }
 });
 
@@ -115,17 +143,17 @@ async function copyScreenshotToClipboard(dataUrl) {
   }
 }
 
-// Copy again button
-copyAgainBtn.addEventListener("click", async () => {
+// Copy again
+copyBtn.addEventListener("click", async () => {
   if (lastScreenshotDataUrl) {
     await copyScreenshotToClipboard(lastScreenshotDataUrl);
     showToast("Copied to clipboard!");
   }
 });
 
-// Dismiss overlay
+// Dismiss preview
 dismissBtn.addEventListener("click", () => {
-  screenshotOverlay.style.display = "none";
+  previewSection.style.display = "none";
   lastScreenshotDataUrl = null;
 });
 

@@ -7,8 +7,7 @@
   <link rel="stylesheet" href="sidepanel.css">
 </head>
 <body>
-  <!-- VIEW 1: Home Dashboard -->
-  <div id="homeView">
+  <div id="app">
     <!-- Header -->
     <header class="header">
       <h1>Learn Anything</h1>
@@ -73,7 +72,7 @@
       </div>
     </section>
 
-    <!-- AI Selector -->
+    <!-- AI Selector + Open -->
     <section class="ai-controls">
       <div class="ai-selector">
         <label for="aiSelect">Chat with:</label>
@@ -85,52 +84,30 @@
         </select>
       </div>
       <button id="openAiBtn" class="btn btn-primary btn-full">Open AI Chat</button>
-    </section>
-  </div>
-
-  <!-- VIEW 2: AI Chat (iframe + toolbar) -->
-  <div id="chatView" style="display:none;">
-    <!-- Chat Toolbar -->
-    <div class="chat-toolbar">
-      <button id="backBtn" class="toolbar-btn" title="Back to home">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6"/>
-        </svg>
-      </button>
-      <select id="aiSelectChat" class="toolbar-select">
-        <option value="https://claude.ai" selected>Claude</option>
-        <option value="https://chat.openai.com">ChatGPT</option>
-        <option value="https://gemini.google.com">Gemini</option>
-        <option value="https://copilot.microsoft.com">Copilot</option>
-      </select>
-      <button id="screenshotBtn" class="toolbar-btn btn-screenshot-icon" title="Screenshot & paste to AI">
+      <button id="screenshotBtn" class="btn btn-screenshot btn-full">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="3" width="18" height="18" rx="2"/>
           <circle cx="12" cy="12" r="3"/>
         </svg>
+        Screenshot &amp; Paste to AI
       </button>
-      <button id="refreshBtn" class="toolbar-btn" title="Reload chat">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="23 4 23 10 17 10"/>
-          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-        </svg>
-      </button>
-    </div>
-    <!-- AI iframe -->
-    <iframe id="aiFrame" src="" allow="clipboard-read; clipboard-write"></iframe>
+    </section>
 
-    <!-- Screenshot preview overlay -->
-    <div id="screenshotOverlay" class="screenshot-overlay" style="display:none;">
-      <div class="screenshot-overlay-content">
-        <h3>Screenshot Captured</h3>
-        <img id="screenshotPreview" alt="Screenshot preview">
-        <p class="screenshot-hint">Screenshot copied to clipboard! Paste it into the chat below with Ctrl+V / Cmd+V</p>
-        <div class="screenshot-actions">
-          <button id="copyAgainBtn" class="btn btn-primary">Copy Again</button>
-          <button id="dismissBtn" class="btn btn-secondary">Dismiss</button>
-        </div>
+    <!-- Screenshot Preview -->
+    <section class="preview-section" id="previewSection" style="display:none;">
+      <h3>Screenshot Captured</h3>
+      <img id="screenshotPreview" alt="Screenshot preview">
+      <p class="preview-hint">Copied to clipboard! Switch to your AI tab and paste with Ctrl+V / Cmd+V</p>
+      <div class="preview-actions">
+        <button id="copyBtn" class="btn btn-primary">Copy Again</button>
+        <button id="dismissBtn" class="btn btn-secondary">Dismiss</button>
       </div>
-    </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Screenshot anything you're stuck on and paste it to AI!</p>
+    </footer>
   </div>
 
   <script src="sidepanel.js"></script>
